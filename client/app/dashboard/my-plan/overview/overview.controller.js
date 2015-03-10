@@ -179,31 +179,48 @@ angular.module('rockridge')
   }
   var start = calculateAge($scope.plan.birthdate);
 
-  // Populate rage and averages
-  // TODO: Use the actual numbers once the calculations are complete.
-  var stdev;
-  for (var i=0; i<(120-start); i++) {
+  // End placeholder retirement calculations
+  var getDataArray = function(group){
+    var values = [];
+    var valuesUpper = [];
+    var valuesLower = [];
+    var labels = [];
+    for(var key in group){
+      values.push(group[key].totalSavingsAcctsThirtyYear);
+      valuesUpper.push(group[key].totalSavingsAcctsThirtyYearUpperBound);
+      valuesLower.push(group[key].totalSavingsAcctsThirtyYearLowerBound);
+    }
+    return [labels, values, valuesUpper, valuesLower];
+  };
+
+  var aggregateAcctValue = [];
+  var aggregateAcctValueUpper = [];
+  var aggregateAcctValueLower = [];
+  var tuple = [];
+  tuple = getDataArray($scope.plan.retireProjection.retireProjThirtyYear);
+  aggregateAcctValue = tuple[1];
+  aggregateAcctValueUpper = tuple[2];
+  aggregateAcctValueLower = tuple[3];
+
+  for (var i=0; i<aggregateAcctValue.length; i++) {
     averages.push([
       i,
-      (variableAssets * (i*0.08)) + savings
+      aggregateAcctValue[i]
     ]);
-    stdev = ((120-i)/(i+1));
     ranges.push([
       i,
-      averages[i][1] - (stdev * averages[i][1]),
-      averages[i][1] + (stdev * averages[i][1])
+      aggregateAcctValueLower[i],
+      aggregateAcctValueUpper[i]
     ]);
   }
-  // End placeholder retirement calculations
-
   $('#retirementContainer').highcharts({
     title: {
-      text: 'Retirement Savings Projection'
+      text: 'Monte Carlo Savings Projection (30 Year)'
     },
     xAxis: {
       type: 'number',
       title: {
-        text: 'Age'
+        text: 'Years'
       }
     },
     yAxis: {

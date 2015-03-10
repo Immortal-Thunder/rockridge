@@ -19,7 +19,7 @@ module.exports.retirementProjection = function(plan){
 
   plan = JSON.parse(plan, dateReviver);
 
-  console.log('wow', plan)
+  //console.log('wow', plan)
 
   var result = {};
 
@@ -39,7 +39,7 @@ module.exports.retirementProjection = function(plan){
   result.nonRetirementAccounts = 0;    //0;  // get from code below
   result.retireAccounts =  0;      //0; // get from code below
   result.maxSaveLongTerm = 24000;  // this is for an indvidual 403b 18500, IRA 5500
-  result.curMonthlySavings = 1500; // plan.aggregateMonthlySavings this is in the TODO in plan
+  result.curMonthlySavings = 50; // plan.aggregateMonthlySavings this is in the TODO in plan
   result.needsWithInflation = [];
   result.needsWithInflation[result.currentAge] = result.monthlyNeeds*((1+result.inflation) + (1+(result.inflation * 11/12)) + (1+(result.inflation * 10/12)) + (1+(result.inflation * 9/12)) + (1+(result.inflation * 8/12)) + (1+(result.inflation * 7/12)) + (1+(result.inflation * 6/12)) + (1+(result.inflation * 5/12)) + (1+(result.inflation * 4/12)) + (1+(result.inflation * 3/12)) + (1+(result.inflation * 2/12)) + (1+(result.inflation * 1/12)));
 
@@ -374,6 +374,7 @@ module.exports.retirementProjection = function(plan){
 
     for(var i=result.currentAge+1; i<theEnd+1; i++){  //iterate from now till theEnd of time for user
       result.retireProj[i] = {};  // create new object for age
+      //interest = i>=result.retireAge ? 0.04 : 0.07;
       interest = 0.07;   // call interest to get this year's return
       interestWorst = getInterestWorst(i);
       interestBest = getInterestBest(i);
@@ -408,6 +409,7 @@ module.exports.retirementProjection = function(plan){
       if(!run){ // if this is the first time calculationsHome has been called
         if(i === theEnd && result.retireProj[i].totalSavingsAccts > 0){
           result.retireProj.endSavings = [theEnd, result.retireProj[i].totalSavingsAccts, currentMonthlySave]; // [theEndAge, savingsAccountsAmt, monthlySaving ]
+          result.searchForOptiSave = true;
         }
         else if(i<theEnd && i>result.retireAge && result.retireProj[i].totalSavingsAccts < result.needsWithInflation[i]){
           result.switchToLongTerm = false;  //stop taking monthlyNeeds from longTermSavings, because monthlySavings are insufficient and we are going to recalculate
@@ -429,8 +431,14 @@ module.exports.retirementProjection = function(plan){
     }
 
     if(result.searchForOptiSave){
-      var suggestMonthlySave = calcMonthlySavingsToMeetGoals(currentMonthlySave);
-      result.retireProj.endSavings = [theEnd, result.retireProj[theEnd].totalSavingsAccts, suggestMonthlySave]; //update results
+      var suggestMonthlySave
+      if(!!result.retireProj.endSavings[2]){
+        suggestMonthlySave = calcMonthlySavingsToMeetGoals(100);
+      }
+      else{
+        suggestMonthlySave = calcMonthlySavingsToMeetGoals(currentMonthlySave);
+      }
+      result.retireProj.endSavingsMin = [theEnd, result.retireProj[theEnd].totalSavingsAccts, suggestMonthlySave]; //update results
     } 
   }
  

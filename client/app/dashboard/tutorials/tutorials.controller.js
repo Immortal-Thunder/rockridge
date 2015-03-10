@@ -7,6 +7,7 @@
 */
 angular.module('rockridge')
 .controller('TutorialsCtrl', function($scope) {
-  $scope.filter = 'in-progress';
+  $scope.filter = 'favorites';
+  $('.ui.video').video();
   // TODO: Get relevant tutorial links from the university
 });

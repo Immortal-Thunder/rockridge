@@ -3,11 +3,7 @@
 <div class="ui attached segment">
 
   <div class="ui top attached tabular menu">
-    <a
-      ng-class="{ 'active':filter==='in-progress', 'item':true }"
-      ng-click="filter = 'in-progress'">
-      In Progress
-    </a>
+    
     <a
       ng-class="{ 'active':filter==='favorites', 'item':true }"
       ng-click="filter = 'favorites'">
@@ -21,9 +17,21 @@
   </div>
 
   <div class="ui bottom attached segment">
-    Stuff
-    <!-- TODO: Rather than create different states for tutorials, I think this would be implemented most effectively by using a simple Angular filter. Something like:-->
-    <!-- <div ng-repeat="course in courses | filter:in-progress"></div> -->
+    <div class='column'>
+      <div class='ui items'>
+        <a class="item" style='text-align: left;'>
+          <div class="ui video" data-source="youtube"
+                                data-id="vKFyiQhnvbc"
+                                data-image="/public/images/rockridgeULogo.jpg"></div>
+          <div class="content">
+            <div class="header">Hot to Start Investing</div>
+            <div class="meta">
+              <span class="category">Category: Investing</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
   </div>
 
 </div>
